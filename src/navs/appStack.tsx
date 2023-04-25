@@ -1,36 +1,22 @@
 import React from 'react';
-import {
-  DefaultTheme,
-  NavigationContainer,
-  Theme,
-} from '@react-navigation/native';
-import {Home} from '@/screens';
+import {BookingDetails} from '@/screens';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {COLORS} from '@/constants';
+import ROUTES from './routes';
+import BottomTabsNavigation from './bottomTabs';
 
 const Stack = createNativeStackNavigator();
 
 function App() {
   return (
-    <NavigationContainer theme={navigationTheme}>
-      <Stack.Navigator>
-        <Stack.Screen
-          name="Home"
-          component={Home}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen name="Details" component={Home} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <Stack.Navigator>
+      <Stack.Screen
+        name={ROUTES.BOTTOM_TABS}
+        component={BottomTabsNavigation}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen name={ROUTES.BOOKING_DETAILS} component={BookingDetails} />
+    </Stack.Navigator>
   );
 }
 
 export default App;
-
-const navigationTheme: Theme = {
-  ...DefaultTheme,
-  colors: {
-    ...DefaultTheme.colors,
-    background: COLORS.white,
-  },
-};

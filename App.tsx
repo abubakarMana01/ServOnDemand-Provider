@@ -1,11 +1,14 @@
 import React from 'react';
 import {SafeAreaView, StyleSheet} from 'react-native';
-import {AppStackNav} from '@/navs';
+import {AppStackNav, navigationTheme} from '@/navs';
+import {NavigationContainer} from '@react-navigation/native';
 
 const App = () => {
   return (
     <SafeAreaView style={styles.container}>
-      <AppStackNav />
+      <NavigationContainer theme={navigationTheme}>
+        <AppStackNav />
+      </NavigationContainer>
     </SafeAreaView>
   );
 };
