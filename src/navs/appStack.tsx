@@ -10,6 +10,8 @@ const Stack = createNativeStackNavigator();
 function AppStack() {
   const {user} = useAppContext();
 
+  console.log(user);
+
   return (
     <Stack.Navigator>
       {user ? (

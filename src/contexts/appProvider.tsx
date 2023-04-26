@@ -7,7 +7,7 @@ interface IProviderProps {
 }
 
 const AppProvider: React.FC<IProviderProps> = ({children}) => {
-  const [user, setUser] = useState({});
+  const [user, setUser] = useState<IUser | null>({});
 
   return (
     <AppContext.Provider value={{user, setUser}}>

@@ -1,4 +1,4 @@
 interface IAppContext {
-  user: IUser;
+  user: IUser | null;
   setUser: React.Dispatch<React.SetStateAction<IAppContext['user']>>;
 }
