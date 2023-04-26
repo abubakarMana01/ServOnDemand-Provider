@@ -99,6 +99,7 @@ const styles = StyleSheet.create({
   statusText: {
     textTransform: 'capitalize',
     fontWeight: '500',
+    fontSize: 12,
   },
   upcomingStatus: {
     backgroundColor: '#1343ED30',
