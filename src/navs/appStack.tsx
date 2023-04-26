@@ -1,22 +1,51 @@
 import React from 'react';
-import {BookingDetails} from '@/screens';
+import {BookingDetails, ChooseAuth, Login, Signup} from '@/screens';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import ROUTES from './routes';
 import BottomTabsNavigation from './bottomTabs';
+import {useAppContext} from '@/contexts/appProvider';
 
 const Stack = createNativeStackNavigator();
 
-function App() {
+function AppStack() {
+  const {user} = useAppContext();
+
   return (
     <Stack.Navigator>
-      <Stack.Screen
-        name={ROUTES.BOTTOM_TABS}
-        component={BottomTabsNavigation}
-        options={{headerShown: false}}
-      />
-      <Stack.Screen name={ROUTES.BOOKING_DETAILS} component={BookingDetails} />
+      {user ? (
+        <>
+          <Stack.Screen
+            name={ROUTES.BOTTOM_TABS}
+            component={BottomTabsNavigation}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name={ROUTES.BOOKING_DETAILS}
+            options={{headerTitle: 'Details'}}
+            component={BookingDetails}
+          />
+        </>
+      ) : (
+        <>
+          <Stack.Screen
+            name={ROUTES.CHOOSE_AUTH}
+            component={ChooseAuth}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name={ROUTES.LOGIN}
+            component={Login}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name={ROUTES.SIGNUP}
+            component={Signup}
+            options={{headerShown: false}}
+          />
+        </>
+      )}
     </Stack.Navigator>
   );
 }
 
-export default App;
+export default AppStack;

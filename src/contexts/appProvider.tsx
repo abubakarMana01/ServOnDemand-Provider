@@ -1,13 +1,19 @@
-import React, {createContext, useContext} from 'react';
+import React, {createContext, useContext, useState} from 'react';
 
-const AppContext = createContext({});
+const AppContext = createContext({} as IAppContext);
 
 interface IProviderProps {
   children: JSX.Element;
 }
 
 const AppProvider: React.FC<IProviderProps> = ({children}) => {
-  return <AppContext.Provider value={{}}>{children}</AppContext.Provider>;
+  const [user, setUser] = useState({});
+
+  return (
+    <AppContext.Provider value={{user, setUser}}>
+      {children}
+    </AppContext.Provider>
+  );
 };
 
 export default AppProvider;

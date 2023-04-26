@@ -1,3 +1,5 @@
+interface IUser {}
+
 interface IService {
   _id: string;
   title: string;

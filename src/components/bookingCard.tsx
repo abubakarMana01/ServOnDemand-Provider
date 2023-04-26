@@ -1,14 +1,21 @@
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React from 'react';
 import {COLORS} from '@/constants';
+import {ROUTES} from '@/navs';
+import {ParamListBase, useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 interface IBookingCard {
   data: IBooking;
 }
 
 export default function BookingCard({data}: IBookingCard) {
+  const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
+
   return (
-    <TouchableOpacity style={styles.container}>
+    <TouchableOpacity
+      style={styles.container}
+      onPress={() => navigation.navigate(ROUTES.BOOKING_DETAILS)}>
       <View style={styles.infoContainer}>
         <Image source={{uri: data.service.picture}} style={styles.image} />
 
