@@ -18,12 +18,15 @@ import {AppTextInput, AppButton} from '../../components';
 import {ParamListBase, useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {COLORS} from '@/constants';
-import {loginValidationSchema} from './helpers';
+import {attemptLogin, loginValidationSchema} from './helpers';
 import {ROUTES} from '@/navs';
+import {useAppContext} from '@/contexts/appProvider';
 
 export default function Login() {
   const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
   const [isRememberMeChecked, setIsRememberMeChecked] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const {setUser, setToken} = useAppContext();
 
   return (
     <KeyboardAvoidingView
@@ -34,14 +37,13 @@ export default function Login() {
           <Formik
             validationSchema={loginValidationSchema}
             initialValues={{email: '', password: ''}}
-            onSubmit={_ => {
-              // attemptLogin({
-              //   values,
-              //   setIsLoading,
-              //   setUser,
-              //   storeToken,
-              //   setToken,
-              // })
+            onSubmit={values => {
+              attemptLogin({
+                values,
+                setIsLoading,
+                setUser,
+                setToken,
+              });
             }}>
             {({
               handleChange,
@@ -115,7 +117,11 @@ export default function Login() {
                 <View style={styles.spacer} />
 
                 <View style={styles.bottom}>
-                  <AppButton title="Log in" onPress={handleSubmit} />
+                  <AppButton
+                    title="Log in"
+                    isLoading={isLoading}
+                    onPress={handleSubmit}
+                  />
                   <Pressable
                     style={styles.bottomTextContainer}
                     onPress={() => navigation.navigate(ROUTES.SIGNUP)}>

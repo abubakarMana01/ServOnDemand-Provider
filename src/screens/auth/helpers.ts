@@ -1,46 +1,44 @@
-// import { login } from '@/utils/apiRequests';
+import {getWorkerInfo, login} from '@/utils/apiRequests';
+import {Alert} from 'react-native';
 import * as yup from 'yup';
 
-// type TAttemptLogin = {
-//   values: {
-//     email: string;
-//     password: string;
-//   };
-//   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
-//   setUser: React.Dispatch<React.SetStateAction<IUser | null>>;
-//   setToken: React.Dispatch<React.SetStateAction<string>>;
-//   storeToken: (value: string) => Promise<void>;
-// };
+type TAttemptLogin = {
+  values: {
+    email: string;
+    password: string;
+  };
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  setUser: IAppContext['setUser'];
+  setToken: IAppContext['setToken'];
+};
 
-// export const attemptLogin = async ({
-//   values,
-//   setIsLoading,
-//   setUser,
-//   setToken,
-//   storeToken,
-// }: TAttemptLogin) => {
-//   setIsLoading(true);
+export const attemptLogin = async ({
+  values,
+  setIsLoading,
+  setUser,
+  setToken,
+}: TAttemptLogin) => {
+  setIsLoading(true);
 
-//   try {
-//     const data = await login({
-//       email: values.email,
-//       password: values.password,
-//     });
+  try {
+    const data = await login({
+      email: values.email,
+      password: values.password,
+    });
 
-//     const res = await getUserInfo(data.token);
-//     await storeToken(data.token);
-//     setToken(data.token);
-//     setUser(res.data);
-//   } catch (ex: any) {
-//     console.log(ex.response?.data?.error || ex.message);
-//     Alert.alert(
-//       'Something failed',
-//       ex?.response?.data?.error?.message || ex.message,
-//     );
-//   } finally {
-//     setIsLoading(false);
-//   }
-// };
+    const res = await getWorkerInfo(data.token);
+    setToken(data.token);
+    setUser(res.data);
+  } catch (ex: any) {
+    console.log(ex.response?.data?.error || ex.message);
+    Alert.alert(
+      'Something failed',
+      ex?.response?.data?.error?.message || ex.message,
+    );
+  } finally {
+    setIsLoading(false);
+  }
+};
 
 export const loginValidationSchema = yup.object().shape({
   email: yup

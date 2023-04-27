@@ -13,8 +13,16 @@ import {COLORS} from '../../constants';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {AppButton} from '@/components';
 import Divider from '@/components/divider';
+import {useAppContext} from '@/contexts/appProvider';
 
 export default function Profile() {
+  const {setToken, setUser} = useAppContext();
+
+  const logout = () => {
+    setToken(null);
+    setUser(null);
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.main}>
@@ -50,7 +58,7 @@ export default function Profile() {
 
         <AppButton
           title="Logout"
-          onPress={() => {}}
+          onPress={logout}
           icon={
             <MaterialCommunityIcons
               name="logout"

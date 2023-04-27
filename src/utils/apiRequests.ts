@@ -6,7 +6,16 @@ type TLoginPayload = {
 };
 
 export const login = async (payload: TLoginPayload) => {
-  const {data} = await axiosInstance.post('/auth/login', payload);
+  const {data} = await axiosInstance.post('/auth/worker/login', payload);
+  return data;
+};
+
+export const getWorkerInfo = async (token: string) => {
+  const {data} = await axiosInstance.get('/workers/me', {
+    headers: {
+      Authorization: 'Bearer ' + token,
+    },
+  });
   return data;
 };
 
