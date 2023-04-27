@@ -2,7 +2,7 @@ import {SectionHeader} from '@/components';
 import BookingCard from '@/components/bookingCard';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {ROUTES} from '@/navs';
-import React from 'react';
+import React, {useState} from 'react';
 import {
   ScrollView,
   StyleSheet,
@@ -16,13 +16,53 @@ import {useAppContext} from '@/contexts/appProvider';
 import {getUpcomingBookings} from '@/utils/apiRequests';
 import {useQuery} from '@tanstack/react-query';
 import LoaderView from '@/components/loaderView';
+import {MarkedDates} from 'react-native-calendars/src/types';
 
 export default function Home() {
   const {user, token} = useAppContext();
+  const [markedDates, setMarkedDates] = useState<MarkedDates>({});
 
+  const padTo2Digits = (num: number) => {
+    return num.toString().padStart(2, '0');
+  };
   const {data: bookings, status} = useQuery({
     queryKey: ['upcomingBookings'],
     queryFn: () => getUpcomingBookings(token!),
+    onSuccess: res => {
+      const dates = res.map(booking => {
+        const date = new Date(booking.createdAt);
+        return (
+          date.getFullYear() +
+          '-' +
+          padTo2Digits(date.getMonth() + 1) +
+          '-' +
+          padTo2Digits(date.getDate())
+        );
+      });
+
+      const todaysDate = new Date();
+      const formattedTodaysDate =
+        todaysDate.getFullYear() +
+        '-' +
+        padTo2Digits(todaysDate.getMonth() + 1) +
+        '-' +
+        padTo2Digits(todaysDate.getDate());
+
+      const formattedDates: MarkedDates = {};
+      const options = {
+        selected: true,
+        selectedColor: COLORS.darkBlue,
+      };
+
+      for (const d of dates) {
+        formattedDates[d] = {...options};
+      }
+      formattedDates[formattedTodaysDate] = {
+        marked: true,
+      };
+
+      setMarkedDates(formattedDates);
+    },
   });
 
   return (
@@ -60,11 +100,7 @@ export default function Home() {
                 textMonthFontWeight: '600',
                 textDayFontSize: 14,
               }}
-              markedDates={{
-                '2023-04-28': {selected: true, selectedColor: COLORS.darkBlue},
-                '2023-04-30': {selected: true, selectedColor: COLORS.darkBlue},
-                '2023-04-26': {marked: true},
-              }}
+              markedDates={markedDates}
             />
           </View>
 
