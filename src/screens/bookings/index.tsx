@@ -1,42 +1,30 @@
 import {FlatList, StyleSheet, View} from 'react-native';
 import React from 'react';
 import BookingCard from '@/components/bookingCard';
-
-const BOOKINGS: IBooking[] = [
-  {id: '1'},
-  {id: '2'},
-  {id: '3'},
-  {id: '4'},
-  {id: '5'},
-  {id: '6'},
-  {id: '7'},
-];
+import {useQuery} from '@tanstack/react-query';
+import {getAllBookings} from '@/utils/apiRequests';
+import {useAppContext} from '@/contexts/appProvider';
+import LoaderView from '@/components/loaderView';
 
 export default function Bookings() {
+  const {token} = useAppContext();
+
+  const {data: bookings, status} = useQuery({
+    queryKey: ['allBookings'],
+    queryFn: () => getAllBookings(token!),
+  });
+
+  if (status === 'loading') {
+    return <LoaderView />;
+  }
+
   return (
     <View style={styles.container}>
       <FlatList
-        data={BOOKINGS}
-        contentContainerStyle={{
-          padding: 16,
-        }}
+        data={bookings}
+        contentContainerStyle={styles.flatList}
         ItemSeparatorComponent={() => <View style={{height: 16}} />}
-        renderItem={() => (
-          <BookingCard
-            data={{
-              _id: '1',
-              service: {
-                _id: '',
-                title: "Men's Haircut",
-                picture:
-                  'https://images.pexels.com/photos/1813272/pexels-photo-1813272.jpeg?auto=compress&cs=tinysrgb&w=800',
-                createdAt: JSON.stringify(Date.now()),
-              },
-              status: 'upcoming',
-              createdAt: Date.now(),
-            }}
-          />
-        )}
+        renderItem={({item}) => <BookingCard data={item} />}
       />
     </View>
   );
@@ -45,5 +33,8 @@ export default function Bookings() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  flatList: {
+    padding: 16,
   },
 });

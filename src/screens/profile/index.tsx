@@ -1,6 +1,5 @@
 import {
   Dimensions,
-  Image,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -17,7 +16,7 @@ import {useAppContext} from '@/contexts/appProvider';
 import {useAuthToken} from '@/hooks';
 
 export default function Profile() {
-  const {setToken, setUser} = useAppContext();
+  const {setToken, setUser, user} = useAppContext();
   const {removeToken} = useAuthToken();
 
   const handleLogout = () => {
@@ -30,12 +29,17 @@ export default function Profile() {
     <View style={styles.container}>
       <View style={styles.main}>
         <View style={styles.userInfo}>
-          <Image
+          {/* <Image
             source={require('@/assets/neymar.jpeg')}
             style={styles.userImg}
-          />
-          <Text style={styles.userName}>Chris Jude</Text>
-          <Text style={styles.userEmail}>worker1@example.com</Text>
+          /> */}
+          <View style={styles.userImg}>
+            <Ionicons name="person" size={80} color={COLORS.grey} />
+          </View>
+          <Text style={styles.userName}>
+            {user?.firstName} {user?.lastName}
+          </Text>
+          <Text style={styles.userEmail}>{user?.email}</Text>
         </View>
 
         <ScrollView bounces={false} contentContainerStyle={styles.scrollView}>
@@ -98,7 +102,9 @@ const styles = StyleSheet.create({
     borderRadius: 65,
     borderWidth: 5,
     borderColor: COLORS.grey,
-    backgroundColor: COLORS.lightGrey,
+    backgroundColor: COLORS.lightGrey + '80',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   userName: {
     fontSize: 24,

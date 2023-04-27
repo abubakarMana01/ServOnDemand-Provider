@@ -1,4 +1,28 @@
-interface IUser {}
+interface IUser {
+  _id: string;
+  chargePerHour: number;
+  email: string;
+  firstName: string;
+  lastName: string;
+  location: {
+    _id: string;
+    address: string;
+    coordinates: {
+      latitude: string;
+      longitude: string;
+    };
+  };
+  ratings: {
+    _id: string;
+    count: number;
+    overallRatings: number;
+  };
+  serviceOffered: {
+    _id: string;
+    description: string;
+    service: string;
+  };
+}
 
 interface IService {
   _id: string;
