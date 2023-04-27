@@ -10,6 +10,7 @@ type TAttemptLogin = {
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
   setUser: IAppContext['setUser'];
   setToken: IAppContext['setToken'];
+  storeToken: (value: string) => Promise<void>;
 };
 
 export const attemptLogin = async ({
@@ -17,6 +18,7 @@ export const attemptLogin = async ({
   setIsLoading,
   setUser,
   setToken,
+  storeToken,
 }: TAttemptLogin) => {
   setIsLoading(true);
 
@@ -27,6 +29,7 @@ export const attemptLogin = async ({
     });
 
     const res = await getWorkerInfo(data.token);
+    await storeToken(data.token);
     setToken(data.token);
     setUser(res.data);
   } catch (ex: any) {

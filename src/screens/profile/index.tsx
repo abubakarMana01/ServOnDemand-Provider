@@ -14,13 +14,16 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import {AppButton} from '@/components';
 import Divider from '@/components/divider';
 import {useAppContext} from '@/contexts/appProvider';
+import {useAuthToken} from '@/hooks';
 
 export default function Profile() {
   const {setToken, setUser} = useAppContext();
+  const {removeToken} = useAuthToken();
 
-  const logout = () => {
+  const handleLogout = () => {
     setToken(null);
     setUser(null);
+    removeToken();
   };
 
   return (
@@ -58,7 +61,7 @@ export default function Profile() {
 
         <AppButton
           title="Logout"
-          onPress={logout}
+          onPress={handleLogout}
           icon={
             <MaterialCommunityIcons
               name="logout"

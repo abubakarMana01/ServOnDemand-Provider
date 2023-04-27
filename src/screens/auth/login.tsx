@@ -21,11 +21,13 @@ import {COLORS} from '@/constants';
 import {attemptLogin, loginValidationSchema} from './helpers';
 import {ROUTES} from '@/navs';
 import {useAppContext} from '@/contexts/appProvider';
+import {useAuthToken} from '@/hooks';
 
 export default function Login() {
   const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
   const [isRememberMeChecked, setIsRememberMeChecked] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const {storeToken} = useAuthToken();
   const {setUser, setToken} = useAppContext();
 
   return (
@@ -43,6 +45,7 @@ export default function Login() {
                 setIsLoading,
                 setUser,
                 setToken,
+                storeToken,
               });
             }}>
             {({
