@@ -1,4 +1,11 @@
-import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {
+  Image,
+  Platform,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import React from 'react';
 import {COLORS} from '@/constants';
 import {ROUTES} from '@/navs';
@@ -75,7 +82,8 @@ const styles = StyleSheet.create({
       width: 1,
     },
     shadowOpacity: 0.1,
-    elevation: 3,
+    elevation: 2,
+    shadowColor: Platform.select({android: COLORS.darkGrey}),
     flexDirection: 'row',
   },
   infoContainer: {

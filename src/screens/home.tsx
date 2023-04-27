@@ -4,6 +4,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import {ROUTES} from '@/navs';
 import React, {useState} from 'react';
 import {
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -162,7 +163,9 @@ const styles = StyleSheet.create({
       width: 1,
     },
     shadowOpacity: 0.1,
-    elevation: 3,
+    borderRadius: 24,
+    elevation: 2,
+    shadowColor: Platform.select({android: COLORS.darkGrey}),
   },
   calendar: {
     borderRadius: 24,
