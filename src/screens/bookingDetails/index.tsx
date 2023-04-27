@@ -8,7 +8,7 @@ import {
   View,
 } from 'react-native';
 import React from 'react';
-import {AppButton, Divider, GoBackButton} from '../../components';
+import {Divider, GoBackButton} from '../../components';
 import {useRoute} from '@react-navigation/native';
 import {COLORS} from '@/constants';
 
@@ -93,12 +93,6 @@ export default function BookingDetails() {
               </Text>
             </View>
           </ScrollView>
-
-          <AppButton
-            onPress={() => {}}
-            title="Write a review"
-            customStyles={{marginTop: 8}}
-          />
         </View>
       </View>
     </SafeAreaView>

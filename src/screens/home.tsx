@@ -12,14 +12,27 @@ import {
 } from 'react-native';
 import {COLORS} from '@/constants';
 import {Calendar} from 'react-native-calendars';
+import {useAppContext} from '@/contexts/appProvider';
+import {getUpcomingBookings} from '@/utils/apiRequests';
+import {useQuery} from '@tanstack/react-query';
+import LoaderView from '@/components/loaderView';
 
 export default function Home() {
+  const {user, token} = useAppContext();
+
+  const {data: bookings, status} = useQuery({
+    queryKey: ['upcomingBookings'],
+    queryFn: () => getUpcomingBookings(token!),
+  });
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
         <View>
-          <Text style={styles.welcomeText}>Welcome John</Text>
-          <Text style={styles.workerJob}>Plumber</Text>
+          <Text style={styles.welcomeText}>Welcome {user?.firstName}</Text>
+          <Text style={styles.workerJob}>
+            {user?.serviceOffered.service?.title}
+          </Text>
         </View>
 
         <TouchableOpacity>
@@ -32,61 +45,42 @@ export default function Home() {
         </TouchableOpacity>
       </View>
 
-      <View style={styles.calendarContainer}>
-        <Calendar
-          style={styles.calendar}
-          theme={{
-            arrowColor: COLORS.darkBlue,
-            dotColor: 'red',
-            indicatorColor: COLORS.darkBlue,
-            todayTextColor: COLORS.darkBlue,
-            textMonthFontWeight: '600',
-            textDayFontSize: 14,
-          }}
-          markedDates={{
-            '2023-04-28': {selected: true, selectedColor: COLORS.darkBlue},
-            '2023-04-30': {selected: true, selectedColor: COLORS.darkBlue},
-            '2023-04-26': {marked: true},
-          }}
-        />
-      </View>
+      {status === 'loading' && <LoaderView />}
 
-      <SectionHeader
-        title="Recent requests"
-        navigationRoute={ROUTES.BOOKINGS}
-      />
+      {status === 'success' && (
+        <>
+          <View style={styles.calendarContainer}>
+            <Calendar
+              style={styles.calendar}
+              theme={{
+                arrowColor: COLORS.darkBlue,
+                dotColor: 'red',
+                indicatorColor: COLORS.darkBlue,
+                todayTextColor: COLORS.darkBlue,
+                textMonthFontWeight: '600',
+                textDayFontSize: 14,
+              }}
+              markedDates={{
+                '2023-04-28': {selected: true, selectedColor: COLORS.darkBlue},
+                '2023-04-30': {selected: true, selectedColor: COLORS.darkBlue},
+                '2023-04-26': {marked: true},
+              }}
+            />
+          </View>
 
-      <BookingCard
-        data={{
-          _id: '1',
-          service: {
-            _id: '',
-            title: "Men's Haircut",
-            picture:
-              'https://images.pexels.com/photos/1813272/pexels-photo-1813272.jpeg?auto=compress&cs=tinysrgb&w=800',
-            createdAt: JSON.stringify(Date.now()),
-          },
-          status: 'upcoming',
-          createdAt: Date.now(),
-        }}
-      />
+          <SectionHeader
+            title="Recent requests"
+            navigationRoute={ROUTES.BOOKINGS}
+          />
 
-      <View style={{height: 16}} />
-
-      <BookingCard
-        data={{
-          _id: '1',
-          service: {
-            _id: '',
-            title: "Men's Haircut",
-            picture:
-              'https://images.pexels.com/photos/1813272/pexels-photo-1813272.jpeg?auto=compress&cs=tinysrgb&w=800',
-            createdAt: JSON.stringify(Date.now()),
-          },
-          status: 'upcoming',
-          createdAt: Date.now(),
-        }}
-      />
+          {bookings.map(booking => (
+            <View key={booking._id}>
+              <BookingCard data={booking} />
+              <View style={{height: 16}} />
+            </View>
+          ))}
+        </>
+      )}
     </ScrollView>
   );
 }
@@ -111,6 +105,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: '700',
     color: COLORS.dark,
+    textTransform: 'capitalize',
   },
   bellNewNotification: {
     position: 'absolute',

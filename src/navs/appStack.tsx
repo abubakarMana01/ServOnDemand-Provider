@@ -11,7 +11,7 @@ function AppStack() {
   const {user} = useAppContext();
 
   return (
-    <Stack.Navigator>
+    <Stack.Navigator screenOptions={{headerShown: false}}>
       {user ? (
         <>
           <Stack.Screen
@@ -21,27 +21,17 @@ function AppStack() {
           />
           <Stack.Screen
             name={ROUTES.BOOKING_DETAILS}
-            options={{headerTitle: 'Details'}}
+            options={{
+              headerTitle: 'Details',
+            }}
             component={BookingDetails}
           />
         </>
       ) : (
         <>
-          <Stack.Screen
-            name={ROUTES.CHOOSE_AUTH}
-            component={ChooseAuth}
-            options={{headerShown: false}}
-          />
-          <Stack.Screen
-            name={ROUTES.LOGIN}
-            component={Login}
-            options={{headerShown: false}}
-          />
-          <Stack.Screen
-            name={ROUTES.SIGNUP}
-            component={Signup}
-            options={{headerShown: false}}
-          />
+          <Stack.Screen name={ROUTES.CHOOSE_AUTH} component={ChooseAuth} />
+          <Stack.Screen name={ROUTES.LOGIN} component={Login} />
+          <Stack.Screen name={ROUTES.SIGNUP} component={Signup} />
         </>
       )}
     </Stack.Navigator>

@@ -40,7 +40,7 @@ export const signup = async (payload: TSignupPayload) => {
 };
 
 export const getAllBookings = async (token: string): Promise<IBooking[]> => {
-  const {data} = await axiosInstance.get('/bookings/vendor/upcoming', {
+  const {data} = await axiosInstance.get('/bookings/vendor/all', {
     headers: {
       Authorization: 'Bearer ' + token,
     },

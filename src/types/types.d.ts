@@ -20,7 +20,7 @@ interface IUser {
   serviceOffered: {
     _id: string;
     description: string;
-    service: string;
+    service: IService;
   };
 }
 
