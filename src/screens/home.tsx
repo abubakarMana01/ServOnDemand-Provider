@@ -4,6 +4,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import {ROUTES} from '@/navs';
 import React, {useState} from 'react';
 import {
+  Dimensions,
   Platform,
   ScrollView,
   StyleSheet,
@@ -86,7 +87,11 @@ export default function Home() {
         </TouchableOpacity>
       </View>
 
-      {status === 'loading' && <LoaderView />}
+      {status === 'loading' && (
+        <View style={{height: Dimensions.get('window').height - 150}}>
+          <LoaderView />
+        </View>
+      )}
 
       {status === 'success' && (
         <>
