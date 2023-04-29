@@ -42,7 +42,10 @@ export default function Signup() {
     if (locationDetails) {
       setAddressError('');
     }
-  }, [locationDetails]);
+    if (selectedServiceId) {
+      setServiceIdError('');
+    }
+  }, [locationDetails, selectedServiceId]);
 
   const handleSignup = async (values: any) => {
     if (!locationDetails?.address || !locationDetails.coordinates) {
@@ -60,7 +63,10 @@ export default function Signup() {
       await signup({
         ...values,
         location: locationDetails,
-        serviceOffered: {description: '', serviceId: selectedServiceId},
+        serviceOffered: {
+          description: 'This is my little description about my service',
+          serviceId: selectedServiceId,
+        },
       });
       Alert.alert('Success', 'You have successfully signed up', [
         {
