@@ -25,7 +25,10 @@ type TSignupPayload = {
   email: string;
   password: string;
   chargePerHour: number;
-  serviceOffered: string;
+  serviceOffered: {
+    description: string;
+    serviceId: string;
+  };
   location: ILocation;
 };
 export const signup = async (payload: TSignupPayload) => {
@@ -50,5 +53,10 @@ export const getUpcomingBookings = async (
       Authorization: 'Bearer ' + token,
     },
   });
+  return data.data;
+};
+
+export const getAllServices = async (): Promise<IService[]> => {
+  const {data} = await axiosInstance.get('/services/all');
   return data.data;
 };

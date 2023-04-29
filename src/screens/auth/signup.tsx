@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {
   Alert,
+  Dimensions,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -20,17 +21,22 @@ import {Pressable} from 'react-native';
 import {signupValidationSchema} from './helpers';
 import {ROUTES} from '@/navs';
 import {COLORS} from '@/constants';
-import {signup} from '@/utils/apiRequests';
-import DropDownPicker from 'react-native-dropdown-picker';
+import {getAllServices, signup} from '@/utils/apiRequests';
 import ServiceDropDownPicker from './components/serviceDropDownPicker';
+import LoaderView from '@/components/loaderView';
+import {useQuery} from '@tanstack/react-query';
 
 export default function Signup() {
   const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
+  const [addressError, setAddressError] = useState('');
+  const [serviceIdError, setServiceIdError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [selectedServiceId, setSelectedServiceId] = useState<string | null>(
+    null,
+  );
   const [locationDetails, setLocationDetails] = useState<ILocation | null>(
     null,
   );
-  const [addressError, setAddressError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (locationDetails) {
@@ -44,9 +50,18 @@ export default function Signup() {
       return Alert.alert('Something went wrong', 'Please enter address again');
     }
 
+    if (!selectedServiceId) {
+      setServiceIdError('Service is required');
+      return Alert.alert('Something went wrong', 'Please select service');
+    }
+
     setIsLoading(true);
     try {
-      await signup({...values, location: locationDetails});
+      await signup({
+        ...values,
+        location: locationDetails,
+        serviceOffered: {description: '', serviceId: selectedServiceId},
+      });
       Alert.alert('Success', 'You have successfully signed up', [
         {
           text: 'OK',
@@ -61,6 +76,11 @@ export default function Signup() {
     }
   };
 
+  const {data: services, status} = useQuery({
+    queryKey: ['allServices'],
+    queryFn: getAllServices,
+  });
+
   return (
     <KeyboardAvoidingView
       style={styles.keyboardAvoidingView}
@@ -74,129 +94,145 @@ export default function Signup() {
           </Text>
         </View>
 
-        <Formik
-          validationSchema={signupValidationSchema}
-          initialValues={{
-            email: '',
-            password: '',
-            firstName: '',
-            lastName: '',
-            chargePerHour: '',
-            // serviceOffered: 0,
-          }}
-          onSubmit={handleSignup}>
-          {({
-            errors,
-            handleSubmit,
-            handleBlur,
-            handleChange,
-            values,
-            touched,
-          }) => (
-            <>
-              <View style={styles.form}>
-                <View style={styles.inputContainer}>
-                  <AppTextInput
-                    label="First name"
-                    placeholder="Enter your first name"
-                    keyboardType="default"
-                    autoCapitalize="words"
-                    value={values.firstName}
-                    onBlur={handleBlur('firstName')}
-                    onChangeText={handleChange('firstName')}
-                    error={errors.firstName}
-                    touched={touched.firstName}
-                    autoFocus
+        {status === 'loading' && (
+          <View style={{height: Dimensions.get('window').height - 170}}>
+            <LoaderView />
+          </View>
+        )}
+
+        {status === 'success' && (
+          <Formik
+            validationSchema={signupValidationSchema}
+            initialValues={{
+              email: '',
+              password: '',
+              firstName: '',
+              lastName: '',
+              chargePerHour: '',
+              // serviceOffered: 0,
+            }}
+            onSubmit={handleSignup}>
+            {({
+              errors,
+              handleSubmit,
+              handleBlur,
+              handleChange,
+              values,
+              touched,
+            }) => (
+              <>
+                <View style={styles.form}>
+                  <View style={styles.inputContainer}>
+                    <AppTextInput
+                      label="First name"
+                      placeholder="Enter your first name"
+                      keyboardType="default"
+                      autoCapitalize="words"
+                      value={values.firstName}
+                      onBlur={handleBlur('firstName')}
+                      onChangeText={handleChange('firstName')}
+                      error={errors.firstName}
+                      touched={touched.firstName}
+                      autoFocus
+                    />
+                  </View>
+
+                  <View style={styles.inputContainer}>
+                    <AppTextInput
+                      label="Last name"
+                      placeholder="Enter your last name"
+                      keyboardType="default"
+                      autoCapitalize="words"
+                      value={values.lastName}
+                      onBlur={handleBlur('lastName')}
+                      onChangeText={handleChange('lastName')}
+                      error={errors.lastName}
+                      touched={touched.lastName}
+                    />
+                  </View>
+
+                  <View style={styles.inputContainer}>
+                    <AppTextInput
+                      label="Email address"
+                      placeholder="Email Address"
+                      keyboardType="email-address"
+                      autoCapitalize="none"
+                      value={values.email}
+                      onBlur={handleBlur('email')}
+                      onChangeText={handleChange('email')}
+                      error={errors.email}
+                      touched={touched.email}
+                    />
+                  </View>
+
+                  <View style={styles.inputContainer}>
+                    <AppTextInput
+                      label="Password"
+                      placeholder="Enter your password"
+                      secureTextEntry
+                      autoCapitalize="none"
+                      value={values.password}
+                      onBlur={handleBlur('password')}
+                      onChangeText={handleChange('password')}
+                      error={errors.password}
+                      touched={touched.password}
+                    />
+                  </View>
+
+                  <View style={styles.inputContainer}>
+                    <AppTextInput
+                      label="Charge/hr"
+                      placeholder="How much would you charge per hour?"
+                      keyboardType="number-pad"
+                      value={values.chargePerHour}
+                      onBlur={handleBlur('chargePerHour')}
+                      onChangeText={handleChange('chargePerHour')}
+                      error={errors.chargePerHour}
+                      touched={touched.chargePerHour}
+                    />
+                  </View>
+
+                  <View style={styles.inputContainer}>
+                    <GooglePlacesAutocompleteInput
+                      placeholder="Enter your address"
+                      setLocationDetails={setLocationDetails}
+                      label="Address"
+                      error={addressError}
+                    />
+                  </View>
+
+                  <View style={styles.inputContainer}>
+                    <ServiceDropDownPicker
+                      {...{
+                        services,
+                        label: 'Service',
+                        error: serviceIdError,
+                        selectedServiceId: selectedServiceId,
+                        setSelectedServiceId: setSelectedServiceId,
+                      }}
+                    />
+                  </View>
+                </View>
+
+                <View style={styles.bottom}>
+                  <AppButton
+                    title="Sign up"
+                    onPress={handleSubmit}
+                    isLoading={isLoading}
                   />
+                  <Pressable
+                    style={styles.bottomTextContainer}
+                    onPress={() => navigation.navigate(ROUTES.LOGIN)}>
+                    <Text style={styles.bottomText}>
+                      Already have an account?{' '}
+                      <Text style={styles.bottomTextLink}>Log in</Text>
+                    </Text>
+                  </Pressable>
                 </View>
-
-                <View style={styles.inputContainer}>
-                  <AppTextInput
-                    label="Last name"
-                    placeholder="Enter your last name"
-                    keyboardType="default"
-                    autoCapitalize="words"
-                    value={values.lastName}
-                    onBlur={handleBlur('lastName')}
-                    onChangeText={handleChange('lastName')}
-                    error={errors.lastName}
-                    touched={touched.lastName}
-                  />
-                </View>
-
-                <View style={styles.inputContainer}>
-                  <AppTextInput
-                    label="Email address"
-                    placeholder="Email Address"
-                    keyboardType="email-address"
-                    autoCapitalize="none"
-                    value={values.email}
-                    onBlur={handleBlur('email')}
-                    onChangeText={handleChange('email')}
-                    error={errors.email}
-                    touched={touched.email}
-                  />
-                </View>
-
-                <View style={styles.inputContainer}>
-                  <AppTextInput
-                    label="Password"
-                    placeholder="Enter your password"
-                    secureTextEntry
-                    autoCapitalize="none"
-                    value={values.password}
-                    onBlur={handleBlur('password')}
-                    onChangeText={handleChange('password')}
-                    error={errors.password}
-                    touched={touched.password}
-                  />
-                </View>
-
-                <View style={styles.inputContainer}>
-                  <AppTextInput
-                    label="Charge/hr"
-                    placeholder="How much would you charge per hour?"
-                    keyboardType="number-pad"
-                    value={values.chargePerHour}
-                    onBlur={handleBlur('chargePerHour')}
-                    onChangeText={handleChange('chargePerHour')}
-                    error={errors.chargePerHour}
-                    touched={touched.chargePerHour}
-                  />
-                </View>
-
-                <View style={styles.inputContainer}>
-                  <GooglePlacesAutocompleteInput
-                    placeholder="Enter your address"
-                    setLocationDetails={setLocationDetails}
-                    label="Address"
-                    error={addressError}
-                  />
-                </View>
-
-                <View style={styles.inputContainer}>
-                  <ServiceDropDownPicker label="Service" error="" />
-                </View>
-              </View>
-
-              <View style={styles.bottom}>
-                <AppButton
-                  title="Sign up"
-                  onPress={handleSubmit}
-                  isLoading={isLoading}
-                />
-                <Pressable
-                  style={styles.bottomTextContainer}
-                  onPress={() => navigation.navigate(ROUTES.LOGIN)}>
-                  <Text style={styles.bottomText}>
-                    Already have an account?{' '}
-                    <Text style={styles.bottomTextLink}>Log in</Text>
-                  </Text>
-                </Pressable>
-              </View>
-            </>
-          )}
-        </Formik>
+              </>
+            )}
+          </Formik>
+        )}
       </ScrollView>
     </KeyboardAvoidingView>
   );

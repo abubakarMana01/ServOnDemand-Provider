@@ -1,24 +1,29 @@
 import {StyleSheet, Text, View} from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {COLORS} from '@/constants';
 
 export default function ServiceDropDownPicker({
   error,
   label,
+  services,
+  selectedServiceId,
+  setSelectedServiceId,
 }: {
   error: string;
   label: string;
+  services: IService[];
+  selectedServiceId: string | null;
+  setSelectedServiceId: React.Dispatch<React.SetStateAction<string | null>>;
 }) {
-  // Picker stuffs
   const [open, setOpen] = useState(false);
-  const [value, setValue] = useState(null);
-  const [items, setItems] = useState([
-    {label: 'Plumber', value: 'Plumber'},
-    {label: 'Car Mechanic', value: 'Car Mechanic'},
-    {label: 'Electrician', value: 'Electrician'},
-    {label: 'AC Repair & Service', value: 'AC Repair & Service'},
-  ]);
+  const [items, setItems] = useState<{label: string; value: string}[]>([]);
+
+  useEffect(() => {
+    setItems(
+      services.map(service => ({label: service.title, value: service._id})),
+    );
+  }, [services]);
 
   return (
     <View>
@@ -34,15 +39,15 @@ export default function ServiceDropDownPicker({
       ) : null}
       <DropDownPicker
         open={open}
-        value={value}
+        value={selectedServiceId}
         items={items}
         setOpen={setOpen}
-        setValue={setValue}
+        setValue={setSelectedServiceId}
         setItems={setItems}
         placeholder="Select the service you offer"
         style={styles.dropdownPicker}
         dropDownContainerStyle={styles.dropdownPicker}
-        placeholderStyle={{color: '#b2beb5ce'}}
+        placeholderStyle={styles.dropdownPickerPlaceholder}
       />
     </View>
   );
@@ -52,6 +57,9 @@ const styles = StyleSheet.create({
   dropdownPicker: {
     borderColor: '#b2beb590',
     borderWidth: 1.5,
+  },
+  dropdownPickerPlaceholder: {
+    color: '#b2beb5ce',
   },
   labelAndErrorContainer: {
     flexDirection: 'row',
