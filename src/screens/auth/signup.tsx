@@ -1,5 +1,6 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
+  Alert,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -19,30 +20,46 @@ import {Pressable} from 'react-native';
 import {signupValidationSchema} from './helpers';
 import {ROUTES} from '@/navs';
 import {COLORS} from '@/constants';
+import {signup} from '@/utils/apiRequests';
+import DropDownPicker from 'react-native-dropdown-picker';
+import ServiceDropDownPicker from './components/serviceDropDownPicker';
 
 export default function Signup() {
   const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
-  const [locationDetails, setLocationDetails] = useState<{} | null>(null);
+  const [locationDetails, setLocationDetails] = useState<ILocation | null>(
+    null,
+  );
+  const [addressError, setAddressError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSignup = async (_: any) => {
-    // setIsLoading(true);
-    // try {
-    //   await signup(values);
-    //   Alert.alert('Success', 'You have successfully signed up', [
-    //     {
-    //       text: 'OK',
-    //       onPress: () => navigation.navigate(ROUTES.LOGIN),
-    //     },
-    //   ]);
-    // } catch (ex: any) {
-    //   console.log(ex.response?.data?.error || ex.message);
-    //   Alert.alert(ex?.response?.data?.error?.message || ex.message);
-    // } finally {
-    //   setIsLoading(false);
-    // }
+  useEffect(() => {
+    if (locationDetails) {
+      setAddressError('');
+    }
+  }, [locationDetails]);
+
+  const handleSignup = async (values: any) => {
+    if (!locationDetails?.address || !locationDetails.coordinates) {
+      setAddressError('Address is required');
+      return Alert.alert('Something went wrong', 'Please enter address again');
+    }
+
+    setIsLoading(true);
+    try {
+      await signup({...values, location: locationDetails});
+      Alert.alert('Success', 'You have successfully signed up', [
+        {
+          text: 'OK',
+          onPress: () => navigation.navigate(ROUTES.LOGIN),
+        },
+      ]);
+    } catch (ex: any) {
+      console.log(ex.response?.data?.error || ex.message);
+      Alert.alert(ex?.response?.data?.error?.message || ex.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
-
-  console.log(locationDetails);
 
   return (
     <KeyboardAvoidingView
@@ -65,8 +82,7 @@ export default function Signup() {
             firstName: '',
             lastName: '',
             chargePerHour: '',
-            serviceOffered: 0,
-            address: '',
+            // serviceOffered: 0,
           }}
           onSubmit={handleSignup}>
           {({
@@ -154,12 +170,21 @@ export default function Signup() {
                     placeholder="Enter your address"
                     setLocationDetails={setLocationDetails}
                     label="Address"
+                    error={addressError}
                   />
+                </View>
+
+                <View style={styles.inputContainer}>
+                  <ServiceDropDownPicker label="Service" error="" />
                 </View>
               </View>
 
               <View style={styles.bottom}>
-                <AppButton title="Sign up" onPress={handleSubmit} />
+                <AppButton
+                  title="Sign up"
+                  onPress={handleSubmit}
+                  isLoading={isLoading}
+                />
                 <Pressable
                   style={styles.bottomTextContainer}
                   onPress={() => navigation.navigate(ROUTES.LOGIN)}>

@@ -26,13 +26,7 @@ type TSignupPayload = {
   password: string;
   chargePerHour: number;
   serviceOffered: string;
-  location: {
-    coordinates: {
-      latitude: number;
-      longitude: number;
-    };
-    address: string;
-  };
+  location: ILocation;
 };
 export const signup = async (payload: TSignupPayload) => {
   const {data} = await axiosInstance.post('/workers/add', payload);

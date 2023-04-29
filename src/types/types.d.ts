@@ -109,3 +109,11 @@ interface IHandyMan {
     service: IService;
   };
 }
+
+interface ILocation {
+  coordinates: {
+    latitude: number;
+    longitude: number;
+  };
+  address: string;
+}

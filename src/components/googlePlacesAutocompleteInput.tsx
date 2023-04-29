@@ -10,15 +10,17 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 type GooglePlacesInputProps = {
   placeholder: string;
-  setLocationDetails: React.Dispatch<React.SetStateAction<null | {}>>;
+  setLocationDetails: React.Dispatch<React.SetStateAction<null | ILocation>>;
   autoFocus?: boolean;
   label?: string;
+  error?: string;
 };
 
 const GooglePlacesInput: React.FC<GooglePlacesInputProps> = ({
   placeholder,
   setLocationDetails,
   label,
+  error,
 }) => {
   const mapRef = useRef<GooglePlacesAutocompleteRef>(null);
 
@@ -27,6 +29,11 @@ const GooglePlacesInput: React.FC<GooglePlacesInputProps> = ({
       {label ? (
         <View style={styles.labelAndErrorContainer}>
           <Text style={styles.label}>{label}</Text>
+          {error ? (
+            <View>
+              <Text style={styles.error}>{error}</Text>
+            </View>
+          ) : null}
         </View>
       ) : null}
       <GooglePlacesAutocomplete
@@ -45,8 +52,11 @@ const GooglePlacesInput: React.FC<GooglePlacesInputProps> = ({
         onPress={(data, details = null) => {
           // 'details' is provided when fetchDetails = true
           setLocationDetails({
-            latitude: details?.geometry.location.lat,
-            longitude: details?.geometry.location.lng,
+            coordinates: {
+              latitude: details?.geometry.location.lat!,
+              longitude: details?.geometry.location.lng!,
+            },
+            address: data.description,
           });
         }}
         styles={{
@@ -88,6 +98,11 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: COLORS.dark,
     marginBottom: 5,
+  },
+  error: {
+    color: 'red',
+    fontSize: 12,
+    alignSelf: 'flex-end',
   },
   textInput: {
     color: COLORS.black,

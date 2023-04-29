@@ -80,9 +80,4 @@ export const signupValidationSchema = yup.object().shape({
     .required('Last name is required')
     .label('Last name'),
   chargePerHour: yup.number().required('Charge is required').label('Charge'),
-  address: yup
-    .string()
-    .max(255)
-    .required('Address is required')
-    .label('Address'),
 });
