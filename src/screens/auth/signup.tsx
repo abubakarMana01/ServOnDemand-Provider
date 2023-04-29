@@ -1,15 +1,18 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
-  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
   View,
 } from 'react-native';
 import {Formik} from 'formik';
-import {AppTextInput, AppButton} from '../../components';
+import {
+  AppTextInput,
+  AppButton,
+  GooglePlacesAutocompleteInput,
+} from '@/components';
 import {ParamListBase, useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {Pressable} from 'react-native';
@@ -19,6 +22,7 @@ import {COLORS} from '@/constants';
 
 export default function Signup() {
   const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
+  const [locationDetails, setLocationDetails] = useState<{} | null>(null);
 
   const handleSignup = async (_: any) => {
     // setIsLoading(true);
@@ -38,113 +42,137 @@ export default function Signup() {
     // }
   };
 
+  console.log(locationDetails);
+
   return (
     <KeyboardAvoidingView
       style={styles.keyboardAvoidingView}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={0}>
-      <SafeAreaView style={styles.container}>
-        <ScrollView bounces={false} showsVerticalScrollIndicator={false}>
-          <View style={styles.header}>
-            <Text style={styles.title}>Sign up</Text>
-            <Text style={styles.subtitle}>
-              Please fill in the form to register
-            </Text>
-          </View>
+      <ScrollView bounces={false} showsVerticalScrollIndicator={false}>
+        <View style={styles.header}>
+          <Text style={styles.title}>Sign up</Text>
+          <Text style={styles.subtitle}>
+            Please fill in the form to register
+          </Text>
+        </View>
 
-          <Formik
-            validationSchema={signupValidationSchema}
-            initialValues={{
-              email: '',
-              password: '',
-              firstName: '',
-              lastName: '',
-            }}
-            onSubmit={handleSignup}>
-            {({
-              errors,
-              handleSubmit,
-              handleBlur,
-              handleChange,
-              values,
-              touched,
-            }) => (
-              <>
-                <View style={styles.form}>
-                  <View style={styles.inputContainer}>
-                    <AppTextInput
-                      label="First name"
-                      placeholder="Enter your first name"
-                      keyboardType="default"
-                      autoCapitalize="words"
-                      value={values.firstName}
-                      onBlur={handleBlur('firstName')}
-                      onChangeText={handleChange('firstName')}
-                      error={errors.firstName}
-                      touched={touched.firstName}
-                      autoFocus
-                    />
-                  </View>
-
-                  <View style={styles.inputContainer}>
-                    <AppTextInput
-                      label="Last name"
-                      placeholder="Enter your last name"
-                      keyboardType="default"
-                      autoCapitalize="words"
-                      value={values.lastName}
-                      onBlur={handleBlur('lastName')}
-                      onChangeText={handleChange('lastName')}
-                      error={errors.lastName}
-                      touched={touched.lastName}
-                    />
-                  </View>
-
-                  <View style={styles.inputContainer}>
-                    <AppTextInput
-                      label="Email address"
-                      placeholder="Email Address"
-                      keyboardType="email-address"
-                      autoCapitalize="none"
-                      value={values.email}
-                      onBlur={handleBlur('email')}
-                      onChangeText={handleChange('email')}
-                      error={errors.email}
-                      touched={touched.email}
-                    />
-                  </View>
-
-                  <View style={styles.inputContainer}>
-                    <AppTextInput
-                      label="Password"
-                      placeholder="Enter your password"
-                      secureTextEntry
-                      autoCapitalize="none"
-                      value={values.password}
-                      onBlur={handleBlur('password')}
-                      onChangeText={handleChange('password')}
-                      error={errors.password}
-                      touched={touched.password}
-                    />
-                  </View>
+        <Formik
+          validationSchema={signupValidationSchema}
+          initialValues={{
+            email: '',
+            password: '',
+            firstName: '',
+            lastName: '',
+            chargePerHour: '',
+            serviceOffered: 0,
+            address: '',
+          }}
+          onSubmit={handleSignup}>
+          {({
+            errors,
+            handleSubmit,
+            handleBlur,
+            handleChange,
+            values,
+            touched,
+          }) => (
+            <>
+              <View style={styles.form}>
+                <View style={styles.inputContainer}>
+                  <AppTextInput
+                    label="First name"
+                    placeholder="Enter your first name"
+                    keyboardType="default"
+                    autoCapitalize="words"
+                    value={values.firstName}
+                    onBlur={handleBlur('firstName')}
+                    onChangeText={handleChange('firstName')}
+                    error={errors.firstName}
+                    touched={touched.firstName}
+                    autoFocus
+                  />
                 </View>
 
-                <View style={styles.bottom}>
-                  <AppButton title="Sign up" onPress={handleSubmit} />
-                  <Pressable
-                    style={styles.bottomTextContainer}
-                    onPress={() => navigation.navigate(ROUTES.LOGIN)}>
-                    <Text style={styles.bottomText}>
-                      Already have an account?{' '}
-                      <Text style={styles.bottomTextLink}>Log in</Text>
-                    </Text>
-                  </Pressable>
+                <View style={styles.inputContainer}>
+                  <AppTextInput
+                    label="Last name"
+                    placeholder="Enter your last name"
+                    keyboardType="default"
+                    autoCapitalize="words"
+                    value={values.lastName}
+                    onBlur={handleBlur('lastName')}
+                    onChangeText={handleChange('lastName')}
+                    error={errors.lastName}
+                    touched={touched.lastName}
+                  />
                 </View>
-              </>
-            )}
-          </Formik>
-        </ScrollView>
-      </SafeAreaView>
+
+                <View style={styles.inputContainer}>
+                  <AppTextInput
+                    label="Email address"
+                    placeholder="Email Address"
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                    value={values.email}
+                    onBlur={handleBlur('email')}
+                    onChangeText={handleChange('email')}
+                    error={errors.email}
+                    touched={touched.email}
+                  />
+                </View>
+
+                <View style={styles.inputContainer}>
+                  <AppTextInput
+                    label="Password"
+                    placeholder="Enter your password"
+                    secureTextEntry
+                    autoCapitalize="none"
+                    value={values.password}
+                    onBlur={handleBlur('password')}
+                    onChangeText={handleChange('password')}
+                    error={errors.password}
+                    touched={touched.password}
+                  />
+                </View>
+
+                <View style={styles.inputContainer}>
+                  <AppTextInput
+                    label="Charge/hr"
+                    placeholder="How much would you charge per hour?"
+                    keyboardType="number-pad"
+                    value={values.chargePerHour}
+                    onBlur={handleBlur('chargePerHour')}
+                    onChangeText={handleChange('chargePerHour')}
+                    error={errors.chargePerHour}
+                    touched={touched.chargePerHour}
+                  />
+                </View>
+
+                <View style={styles.inputContainer}>
+                  <GooglePlacesAutocompleteInput
+                    placeholder="Enter your address"
+                    setLocationDetails={setLocationDetails}
+                    label="Address"
+                  />
+                </View>
+              </View>
+
+              <View style={styles.bottom}>
+                <AppButton title="Sign up" onPress={handleSubmit} />
+                <Pressable
+                  style={styles.bottomTextContainer}
+                  onPress={() => navigation.navigate(ROUTES.LOGIN)}>
+                  <Text style={styles.bottomText}>
+                    Already have an account?{' '}
+                    <Text style={styles.bottomTextLink}>Log in</Text>
+                  </Text>
+                </Pressable>
+              </View>
+            </>
+          )}
+        </Formik>
+      </ScrollView>
     </KeyboardAvoidingView>
   );
 }
@@ -153,9 +181,6 @@ const styles = StyleSheet.create({
   keyboardAvoidingView: {
     flex: 1,
     paddingHorizontal: 16,
-  },
-  container: {
-    flex: 1,
   },
   header: {
     marginTop: 16,
@@ -166,7 +191,7 @@ const styles = StyleSheet.create({
     color: COLORS.black,
   },
   subtitle: {
-    fontWeight: Platform.OS === 'ios' ? '500' : '600',
+    fontWeight: Platform.select({ios: '500', android: '600'}),
     color: COLORS.black,
     opacity: 0.5,
     marginTop: 3,
@@ -179,10 +204,11 @@ const styles = StyleSheet.create({
     height: 180,
   },
   form: {
-    marginVertical: 40,
+    marginTop: 32,
+    marginBottom: 16,
   },
   inputContainer: {
-    marginBottom: 24,
+    marginBottom: 16,
   },
   bottom: {
     alignItems: 'center',
