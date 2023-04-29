@@ -21,5 +21,5 @@ export default function useAuthToken() {
   const removeToken = () => {
     AsyncStorage.removeItem('jwtToken');
   };
-  return {storeToken, removeToken, getToken};
+  return {storeToken, getToken, removeToken};
 }
