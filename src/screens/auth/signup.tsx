@@ -39,11 +39,11 @@ export default function Signup() {
   );
 
   useEffect(() => {
-    if (locationDetails) {
-      setAddressError('');
-    }
     if (selectedServiceId) {
       setServiceIdError('');
+    }
+    if (locationDetails) {
+      setAddressError('');
     }
   }, [locationDetails, selectedServiceId]);
 
