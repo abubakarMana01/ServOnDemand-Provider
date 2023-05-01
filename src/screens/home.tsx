@@ -71,7 +71,7 @@ export default function Home() {
     <ScrollView style={styles.container}>
       <View style={styles.header}>
         <View>
-          <Text style={styles.welcomeText}>Welcome {user?.firstName}</Text>
+          <Text style={styles.welcomeText}>Welcome {user?.lastName}</Text>
           <Text style={styles.workerJob}>
             {user?.serviceOffered.service?.title}
           </Text>
