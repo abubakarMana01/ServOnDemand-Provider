@@ -115,7 +115,7 @@ export default function Signup() {
               firstName: '',
               lastName: '',
               chargePerHour: '',
-              // serviceOffered: 0,
+              phoneNumber: '',
             }}
             onSubmit={handleSignup}>
             {({
@@ -154,6 +154,19 @@ export default function Signup() {
                       onChangeText={handleChange('lastName')}
                       error={errors.lastName}
                       touched={touched.lastName}
+                    />
+                  </View>
+
+                  <View style={styles.inputContainer}>
+                    <AppTextInput
+                      label="Phone number"
+                      placeholder="Enter your phone number"
+                      keyboardType="number-pad"
+                      value={values.phoneNumber}
+                      onBlur={handleBlur('phoneNumber')}
+                      onChangeText={handleChange('phoneNumber')}
+                      error={errors.phoneNumber}
+                      touched={touched.phoneNumber}
                     />
                   </View>
 

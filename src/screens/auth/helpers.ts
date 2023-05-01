@@ -73,6 +73,11 @@ export const signupValidationSchema = yup.object().shape({
     .max(255)
     .required('First name is required')
     .label('First name'),
+  phoneNumber: yup
+    .string()
+    .matches(/^[0-9]{11}$/, {message: 'Phone must be 11 digits.'})
+    .required('Phone is required')
+    .label('Phone'),
   lastName: yup
     .string()
     .min(2)
