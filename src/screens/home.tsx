@@ -56,12 +56,13 @@ export default function Home() {
         selectedColor: COLORS.darkBlue,
       };
 
-      for (const d of dates) {
-        formattedDates[d] = {...options};
-      }
       formattedDates[formattedTodaysDate] = {
         marked: true,
       };
+
+      for (const d of dates) {
+        formattedDates[d] = {...options};
+      }
 
       setMarkedDates(formattedDates);
     },

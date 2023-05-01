@@ -6,19 +6,32 @@ import {
   StyleSheet,
   Text,
   View,
+  Platform,
+  Linking,
 } from 'react-native';
 import React from 'react';
-import {Divider, GoBackButton} from '../../components';
+import {AppButton, Divider, GoBackButton} from '../../components';
 import {useRoute} from '@react-navigation/native';
 import {COLORS} from '@/constants';
 
 export default function BookingDetails() {
   const route = useRoute();
 
-  const {service, worker, status} = route.params as {
+  const {service, worker, status, user} = route.params as {
     service: IService;
     worker: IHandyMan;
+    user: IUser;
     status: 'completed' | 'cancelled' | 'upcoming';
+  };
+
+  const openDialScreen = () => {
+    let number = '';
+    if (Platform.OS === 'ios') {
+      number = 'telprompt:${' + user.phoneNumber + '}';
+    } else {
+      number = 'tel:${' + user.phoneNumber + '}';
+    }
+    Linking.openURL(number);
   };
 
   return (
@@ -93,6 +106,23 @@ export default function BookingDetails() {
               </Text>
             </View>
           </ScrollView>
+
+          <SafeAreaView>
+            <Divider color={COLORS.grey + '70'} />
+            <View style={styles.actionButtonsContainer}>
+              <View style={styles.actionButton}>
+                <AppButton
+                  title="Reject"
+                  onPress={() => {}}
+                  customStyles={styles.messageButton}
+                  customTextStyles={styles.messageButtonText}
+                />
+              </View>
+              <View style={styles.actionButton}>
+                <AppButton title="Contact" onPress={() => openDialScreen()} />
+              </View>
+            </View>
+          </SafeAreaView>
         </View>
       </View>
     </SafeAreaView>
@@ -173,6 +203,27 @@ const styles = StyleSheet.create({
   },
   cancelledStatus: {
     backgroundColor: '#ED131320',
+    color: '#ED1313',
+  },
+
+  actionButtonsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingTop: 12,
+    paddingBottom:
+      Platform.OS === 'android'
+        ? 12
+        : Dimensions.get('window').height < 700
+        ? 12
+        : 0,
+  },
+  actionButton: {
+    flex: 0.47,
+  },
+  messageButton: {
+    backgroundColor: '#ED131320',
+  },
+  messageButtonText: {
     color: '#ED1313',
   },
 });

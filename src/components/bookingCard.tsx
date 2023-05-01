@@ -27,6 +27,7 @@ export default function BookingCard({data}: IBookingCard) {
           service: data.service,
           worker: data.worker,
           status: data.status,
+          user: data.userId,
         })
       }>
       <View style={styles.infoContainer}>

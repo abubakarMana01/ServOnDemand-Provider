@@ -4,6 +4,7 @@ interface IUser {
   email: string;
   firstName: string;
   lastName: string;
+  phoneNumber: string;
   location: {
     _id: string;
     address: string;
@@ -36,7 +37,7 @@ interface IBooking {
   service: IService;
   worker: IHandyMan;
   status: 'upcoming' | 'cancelled' | 'completed';
-  userId: string;
+  userId: IUser;
   createdAt: string;
 }
 
@@ -45,6 +46,7 @@ interface IWorker {
   firstName: string;
   lastName: string;
   email: string;
+  phoneNumber: string;
   serviceOffered: {
     description: string;
     service: string;
